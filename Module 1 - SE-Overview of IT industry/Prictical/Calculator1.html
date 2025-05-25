@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simple Calculator</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f5f5f5;
+    font-family: Arial, sans-serif;
+  }
+  .calculator {
+    background: #222;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #0008;
+    width: 300px;
+  }
+  .display {
+    background: #444;
+    color: #fff;
+    font-size: 2rem;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: right;
+    margin-bottom: 20px;
+    min-height: 50px;
+    user-select: none;
+  }
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  button {
+    font-size: 1.5rem;
+    padding: 20px;
+    border: none;
+    border-radius: 5px;
+    background: #555;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button:hover {
+    background: #777;
+  }
+  button.operator {
+    background: #f57c00;
+  }
+  button.operator:hover {
+    background: #ff9800;
+  }
+  button.equal {
+    grid-column: span 2;
+    background: #4caf50;
+  }
+  button.equal:hover {
+    background: #66bb6a;
+  }
+  button.clear {
+    background: #d32f2f;
+  }
+  button.clear:hover {
+    background: #e57373;
+  }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+  <div id="display" class="display">0</div>
+  <div class="buttons">
+    <button class="clear" id="clear">C</button>
+    <button class="operator" data-op="/">÷</button>
+    <button class="operator" data-op="*">×</button>
+    <button class="operator" data-op="-">−</button>
+    
+    <button data-num="7">7</button>
+    <button data-num="8">8</button>
+    <button data-num="9">9</button>
+    <button class="operator" data-op="+">+</button>
+    
+    <button data-num="4">4</button>
+    <button data-num="5">5</button>
+    <button data-num="6">6</button>
+    <button data-num="1">1</button>
+    
+    <button data-num="2">2</button>
+    <button data-num="3">3</button>
+    <button data-num="0">0</button>
+    <button data-num=".">.</button>
+    
+    <button class="equal" id="equals">=</button>
+  </div>
+</div>
+
+<script>
+  const display = document.getElementById('display');
+  let currentInput = '';
+  let lastInput = '';
+  
+  function updateDisplay() {
+    display.textContent = currentInput || '0';
+  }
+  
+  function appendNumber(num) {
+    if (num === '.' && currentInput.includes('.')) return;
+    currentInput += num;
+  }
+  
+  function appendOperator(op) {
+    if (currentInput === '' && op !== '-') return; // don't start with operator except minus
+    if (/[+\-*/]$/.test(currentInput)) {
+      currentInput = currentInput.slice(0, -1); // replace last operator
+    }
+    currentInput += op;
+  }
+  
+  function clearDisplay() {
+    currentInput = '';
+  }
+  
+  function calculate() {
+    try {
+      // Replace × and ÷ signs if present (here we use * and / already)
+      const result = eval(currentInput);
+      currentInput = result.toString();
+    } catch {
+      currentInput = 'Error';
+    }
+  }
+  
+  document.querySelectorAll('button').forEach(button => {
+    button.addEventListener('click', () => {
+      if (button.hasAttribute('data-num')) {
+        appendNumber(button.getAttribute('data-num'));
+        updateDisplay();
+      } else if (button.hasAttribute('data-op')) {
+        appendOperator(button.getAttribute('data-op'));
+        updateDisplay();
+      } else if (button.id === 'clear') {
+        clearDisplay();
+        updateDisplay();
+      } else if (button.id === 'equals') {
+        calculate();
+        updateDisplay();
+      }
+    });
+  });
+  
+  updateDisplay();
+</script>
+
+</body>
+</html>
